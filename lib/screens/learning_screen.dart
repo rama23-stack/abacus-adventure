@@ -18,7 +18,7 @@ class _LearningScreenState extends State<LearningScreen> {
   final ProgressService _progress = ProgressService();
 
   int _stepIndex = 0;
-  late List> _tasks;
+  var _tasks = [];
   String _bearMessage = '';
 
   @override
