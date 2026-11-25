@@ -1,7 +1,7 @@
 name: Build Abacus Adventure APK
 
 on:
-  workflow_dispatch: # Tombol manual untuk mulai build
+  workflow_dispatch:
   push:
     branches: [ main ]
 
@@ -32,9 +32,11 @@ jobs:
           cp -r temp_app/test .
           rm -rf temp_app
 
-      - name: Configure Landscape Orientation
+      - name: Configure Landscape & Kotlin Version
         run: |
           sed -i 's/android:name=".MainActivity"/android:name=".MainActivity" android:screenOrientation="landscape"/g' android/app/src/main/AndroidManifest.xml
+          sed -i 's/id "org.jetbrains.kotlin.android" version "1.7.10"/id "org.jetbrains.kotlin.android" version "1.9.22"/g' android/settings.gradle
+          sed -i 's/id "org.jetbrains.kotlin.android" version "1.8.22"/id "org.jetbrains.kotlin.android" version "1.9.22"/g' android/settings.gradle
 
       - name: Install Dependencies
         run: flutter pub get
