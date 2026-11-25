@@ -1,0 +1,49 @@
+name: Build Abacus Adventure APK
+
+on:
+  workflow_dispatch: # Tombol manual untuk mulai build
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0'
+          channel: 'stable'
+
+      - name: Create Flutter Project Structure
+        run: |
+          flutter create temp_app --org com.ghazy.abacus --project-name abacus_adventure
+          cp -r temp_app/android .
+          cp -r temp_app/test .
+          rm -rf temp_app
+
+      - name: Configure Landscape Orientation
+        run: |
+          sed -i 's/android:name=".MainActivity"/android:name=".MainActivity" android:screenOrientation="landscape"/g' android/app/src/main/AndroidManifest.xml
+
+      - name: Install Dependencies
+        run: flutter pub get
+
+      - name: Build APK Release
+        run: flutter build apk --release
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Abacus-Adventure-APK
+          path: build/app/outputs/flutter-apk/app-release.apk
